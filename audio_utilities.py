@@ -1,6 +1,3 @@
-
-
-
 import math
 import sys
 import time
@@ -313,5 +310,5 @@ def save_audio_to_file(x, sample_rate, outfile='out.wav'):
         data.append(cur_samp)
     f = wave.open(outfile, 'w')
     f.setparams((1, 2, sample_rate, 0, "NONE", "Uncompressed"))
-    f.writeframes(data.tostring())
+    f.writeframes(data.tobytes())
     f.close()
