@@ -10,6 +10,7 @@ import array
 import os
 from os.path import expanduser
 import scipy.io.wavfile
+import random
 
 # Author: Brian K. Vogel
 # brian.vogel@gmail.com
@@ -255,7 +256,7 @@ def get_signal(in_file, expected_fs=44100):
         return y.mean(axis=1)
 
 
-def reconstruct_signal_griffin_lim(magnitude_spectrogram, fft_size, hopsamp, iterations):
+def reconstruct_signal_griffin_lim(magnitude_spectrogram, fft_size, hopsamp, iterations, **kwargs):
     """Reconstruct an audio signal from a magnitude spectrogram.
 
     Given a magnitude spectrogram as input, reconstruct
@@ -270,10 +271,16 @@ def reconstruct_signal_griffin_lim(magnitude_spectrogram, fft_size, hopsamp, ite
         hopsamp (int): The hope size in samples.
         iterations (int): Number of iterations for the Griffin-Lim algorithm. Typically a few hundred
             is sufficient.
+        kwargs: allows the use of a random seed to manipulate the Griffin-Lim algorithm. This ensures a deterministic output.
 
     Returns:
         The reconstructed time domain signal as a 1-dim Numpy array.
     """
+    if 'seed' in kwargs.keys():
+        # If random seed was given as function input argument, set random generator
+        random.seed(kwargs['seed'])
+        np.random.seed(kwargs['seed'])
+
     time_slices = magnitude_spectrogram.shape[0]
     len_samples = int(time_slices*hopsamp + fft_size)
     # Initialize the reconstructed signal to noise.
